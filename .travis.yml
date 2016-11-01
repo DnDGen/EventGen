@@ -1,0 +1,9 @@
+language: csharp
+solution: EventGen.sln
+install:
+  - nuget restore EventGen.sln
+  - nuget install NUnit.Runners -OutputDirectory testrunner
+script:
+  - xbuild EventGen.sln /p:TargetFrameworkVersion="v4.5"
+  - mono ./testrunner/NUnit.ConsoleRunner.*/tools/nunit3-console.exe ./EventGen.Tests.Unit/bin/Stress/EventGen.Tests.Unit.dll
+  - mono ./testrunner/NUnit.ConsoleRunner.*/tools/nunit3-console.exe ./EventGen.Tests.Integration.IoC/bin/Stress/EventGen.Tests.Integration.IoC.dll
