@@ -5,10 +5,13 @@ namespace EventGen
 {
     public interface GenEventQueue
     {
-        void Enqueue(Guid clientID, GenEvent genEvent);
-        void Enqueue(Guid clientID, string source, string message);
+        void Enqueue(GenEvent genEvent);
+        void Enqueue(string source, string message);
+        GenEvent Dequeue();
         GenEvent Dequeue(Guid clientID);
+        IEnumerable<GenEvent> DequeueAll();
         IEnumerable<GenEvent> DequeueAll(Guid clientID);
+        bool ContainsEvents();
         bool ContainsEvents(Guid clientID);
     }
 }

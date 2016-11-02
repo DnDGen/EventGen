@@ -7,6 +7,7 @@ namespace EventGen.IoC.Modules
         public override void Load()
         {
             Bind<GenEventQueue>().To<DomainGenEventQueue>().InSingletonScope();
+            Bind<ClientIDManager>().To<ThreadClientIDManager>().InSingletonScope();
         }
     }
 }

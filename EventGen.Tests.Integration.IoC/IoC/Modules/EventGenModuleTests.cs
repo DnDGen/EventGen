@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using Ninject;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -10,6 +11,11 @@ namespace EventGen.Tests.Integration.IoC.IoC.Modules
     [TestFixture]
     public class EventGenModuleTests : IntegrationTests
     {
+        [Inject]
+        public ClientIDManager ClientIDManager { get; set; }
+        [Inject]
+        public GenEventQueue EventQueue { get; set; }
+
         private bool shouldSleep;
         private List<GenEvent> events;
         private Guid clientID;
@@ -24,44 +30,54 @@ namespace EventGen.Tests.Integration.IoC.IoC.Modules
             clientID = Guid.NewGuid();
             secondEvents = new List<GenEvent>();
             secondClientID = Guid.NewGuid();
+
+            ClientIDManager.SetClientID(clientID);
         }
 
         [TearDown]
         public void TearDown()
         {
-            var queue = GetNewInstanceOf<GenEventQueue>();
-            queue.DequeueAll(clientID);
-            queue.DequeueAll(secondClientID);
+            EventQueue.DequeueAll(clientID);
+            EventQueue.DequeueAll(secondClientID);
         }
 
         [Test]
         public void GenEventQueueIsInjected()
         {
-            var queue = GetNewInstanceOf<GenEventQueue>();
-            Assert.That(queue, Is.Not.Null);
-            Assert.That(queue, Is.InstanceOf<DomainGenEventQueue>());
+            Assert.That(EventQueue, Is.Not.Null);
+            Assert.That(EventQueue, Is.InstanceOf<DomainGenEventQueue>());
         }
 
         [Test]
         public void GenEventQueueIsInjectedAsSingleton()
         {
-            var first = GetNewInstanceOf<GenEventQueue>();
             var second = GetNewInstanceOf<GenEventQueue>();
-            Assert.That(first, Is.EqualTo(second));
+            Assert.That(EventQueue, Is.EqualTo(second));
+        }
+
+        [Test]
+        public void ClientIDManagerIsInjected()
+        {
+            Assert.That(ClientIDManager, Is.Not.Null);
+            Assert.That(ClientIDManager, Is.InstanceOf<ThreadClientIDManager>());
+        }
+
+        [Test]
+        public void ClientIDManagerIsInjectedAsSingleton()
+        {
+            var second = GetNewInstanceOf<ClientIDManager>();
+            Assert.That(ClientIDManager, Is.EqualTo(second));
         }
 
         [Test]
         public void GenEventQueueUsesQueueAsSingleton()
         {
-            var first = GetNewInstanceOf<GenEventQueue>();
             var message = Guid.NewGuid().ToString();
             var enqueueTime = DateTime.Now;
 
-            first.Enqueue(clientID, "EventGen integration tests", message);
+            EventQueue.Enqueue("EventGen integration tests", message);
 
-            var second = GetNewInstanceOf<GenEventQueue>();
-            var genEvent = second.Dequeue(clientID);
-
+            var genEvent = EventQueue.Dequeue(clientID);
             Assert.That(genEvent.Source, Is.EqualTo("EventGen integration tests"));
             Assert.That(genEvent.Message, Is.EqualTo(message));
             Assert.That(genEvent.When, Is.EqualTo(enqueueTime).Within(1).Seconds);
@@ -81,8 +97,7 @@ namespace EventGen.Tests.Integration.IoC.IoC.Modules
             second.Start();
             Thread.Sleep(50);
 
-            var eventQueue = GetNewInstanceOf<GenEventQueue>();
-            var events = eventQueue.DequeueAll(clientID);
+            var events = EventQueue.DequeueAll(clientID);
             Assert.That(events.Count, Is.EqualTo(6));
 
             var orderedEvents = events.OrderBy(e => e.When).ToArray();
@@ -112,8 +127,7 @@ namespace EventGen.Tests.Integration.IoC.IoC.Modules
             second.Start();
             Thread.Sleep(1000);
 
-            var eventQueue = GetNewInstanceOf<GenEventQueue>();
-            var events = eventQueue.DequeueAll(clientID).ToArray();
+            var events = EventQueue.DequeueAll(clientID).ToArray();
             Assert.That(events.Count, Is.EqualTo(6));
 
             var orderedEvents = events.OrderBy(e => e.When).ToArray();
@@ -166,16 +180,17 @@ namespace EventGen.Tests.Integration.IoC.IoC.Modules
 
         private void FirstThreadAction()
         {
-            var eventQueue = GetNewInstanceOf<GenEventQueue>();
-            eventQueue.Enqueue(clientID, "first thread", "logged a message");
+            ClientIDManager.SetClientID(clientID);
+
+            EventQueue.Enqueue("first thread", "logged a message");
 
             if (shouldSleep)
                 Thread.Sleep(60);
 
             var genEvent = new GenEvent("first thread", "logged an event");
-            eventQueue.Enqueue(clientID, genEvent);
+            EventQueue.Enqueue(genEvent);
 
-            eventQueue.Enqueue(clientID, "first thread", "logged a first-thread message");
+            EventQueue.Enqueue("first thread", "logged a first-thread message");
         }
 
         private void SecondThreadAction()
@@ -185,17 +200,17 @@ namespace EventGen.Tests.Integration.IoC.IoC.Modules
 
         private void EnqueueSecondThread(Guid targetClientID)
         {
-            var eventQueue = GetNewInstanceOf<GenEventQueue>();
+            ClientIDManager.SetClientID(targetClientID);
 
             var genEvent = new GenEvent("second thread", "logged an event");
-            eventQueue.Enqueue(targetClientID, genEvent);
+            EventQueue.Enqueue(genEvent);
 
-            eventQueue.Enqueue(targetClientID, "second thread", "logged a message");
+            EventQueue.Enqueue("second thread", "logged a message");
 
             if (shouldSleep)
                 Thread.Sleep(30);
 
-            eventQueue.Enqueue(targetClientID, "second thread", "logged a second-thread message");
+            EventQueue.Enqueue("second thread", "logged a second-thread message");
         }
 
         private void SecondThreadActionWithSecondClientID()
@@ -210,13 +225,12 @@ namespace EventGen.Tests.Integration.IoC.IoC.Modules
 
         private void PopulateEvents(List<GenEvent> targetEvents, Guid clientID)
         {
-            var eventQueue = GetNewInstanceOf<GenEventQueue>();
             var stopwatch = new Stopwatch();
             stopwatch.Start();
 
             while (stopwatch.ElapsedMilliseconds < 100)
             {
-                var genEvent = eventQueue.Dequeue(clientID);
+                var genEvent = EventQueue.Dequeue(clientID);
 
                 if (genEvent != null)
                     targetEvents.Add(genEvent);

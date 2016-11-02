@@ -7,16 +7,24 @@ namespace EventGen
     internal class DomainGenEventQueue : GenEventQueue
     {
         private readonly Dictionary<Guid, Queue<GenEvent>> queues;
+        private readonly ClientIDManager clientIDManager;
 
-        public DomainGenEventQueue()
+        public DomainGenEventQueue(ClientIDManager clientIDManager)
         {
+            this.clientIDManager = clientIDManager;
             queues = new Dictionary<Guid, Queue<GenEvent>>();
+        }
+
+        public bool ContainsEvents()
+        {
+            var clientID = clientIDManager.GetClientID();
+            return ContainsEvents(clientID);
         }
 
         public bool ContainsEvents(Guid clientID)
         {
             var queue = GetQueue(clientID);
-            return queues[clientID].Any();
+            return queue.Any();
         }
 
         public GenEvent Dequeue(Guid clientID)
@@ -28,12 +36,30 @@ namespace EventGen
             return queue.Dequeue();
         }
 
+        public GenEvent Dequeue()
+        {
+            var clientID = clientIDManager.GetClientID();
+            return Dequeue(clientID);
+        }
+
+        private Queue<GenEvent> GetQueue()
+        {
+            var clientID = clientIDManager.GetClientID();
+            return GetQueue(clientID);
+        }
+
         private Queue<GenEvent> GetQueue(Guid clientID)
         {
             if (queues.ContainsKey(clientID) == false)
                 queues[clientID] = new Queue<GenEvent>();
 
             return queues[clientID];
+        }
+
+        public IEnumerable<GenEvent> DequeueAll()
+        {
+            var clientID = clientIDManager.GetClientID();
+            return DequeueAll(clientID);
         }
 
         public IEnumerable<GenEvent> DequeueAll(Guid clientID)
@@ -50,16 +76,16 @@ namespace EventGen
             return events;
         }
 
-        public void Enqueue(Guid clientID, GenEvent genEvent)
+        public void Enqueue(GenEvent genEvent)
         {
-            var queue = GetQueue(clientID);
+            var queue = GetQueue();
             queue.Enqueue(genEvent);
         }
 
-        public void Enqueue(Guid clientID, string source, string message)
+        public void Enqueue(string source, string message)
         {
             var genEvent = new GenEvent(source, message);
-            Enqueue(clientID, genEvent);
+            Enqueue(genEvent);
         }
     }
 }

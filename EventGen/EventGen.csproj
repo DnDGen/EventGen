@@ -44,12 +44,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ClientIDManager.cs" />
     <Compile Include="DomainGenEventQueue.cs" />
     <Compile Include="GenEventQueue.cs" />
     <Compile Include="GenEvent.cs" />
     <Compile Include="IoC\EventGenModuleLoader.cs" />
     <Compile Include="IoC\Modules\EventGenModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ThreadClientIDManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

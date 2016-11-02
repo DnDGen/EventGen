@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using Moq;
+using NUnit.Framework;
 using System;
 using System.Linq;
 
@@ -8,13 +9,17 @@ namespace EventGen.Tests.Unit
     public class DomainGenEventQueueTests
     {
         private GenEventQueue eventQueue;
+        private Mock<ClientIDManager> mockClientIDManager;
         private Guid clientID;
 
         [SetUp]
         public void Setup()
         {
-            eventQueue = new DomainGenEventQueue();
+            mockClientIDManager = new Mock<ClientIDManager>();
+            eventQueue = new DomainGenEventQueue(mockClientIDManager.Object);
             clientID = Guid.NewGuid();
+
+            mockClientIDManager.Setup(m => m.GetClientID()).Returns(clientID);
         }
 
         [Test]
@@ -24,7 +29,7 @@ namespace EventGen.Tests.Unit
             genEvent.Message = Guid.NewGuid().ToString();
             genEvent.Source = Guid.NewGuid().ToString();
 
-            eventQueue.Enqueue(clientID, genEvent);
+            eventQueue.Enqueue(genEvent);
 
             var queuedEvent = eventQueue.Dequeue(clientID);
             Assert.That(queuedEvent, Is.EqualTo(genEvent));
@@ -36,7 +41,7 @@ namespace EventGen.Tests.Unit
             var message = Guid.NewGuid().ToString();
             var source = Guid.NewGuid().ToString();
 
-            eventQueue.Enqueue(clientID, source, message);
+            eventQueue.Enqueue(source, message);
 
             var queuedEvent = eventQueue.Dequeue(clientID);
             Assert.That(queuedEvent.Source, Is.EqualTo(source));
@@ -50,13 +55,13 @@ namespace EventGen.Tests.Unit
             var message = Guid.NewGuid().ToString();
             var source = Guid.NewGuid().ToString();
 
-            eventQueue.Enqueue(clientID, source, message);
+            eventQueue.Enqueue(source, message);
 
             var genEvent = new GenEvent();
             genEvent.Message = Guid.NewGuid().ToString();
             genEvent.Source = Guid.NewGuid().ToString();
 
-            eventQueue.Enqueue(clientID, genEvent);
+            eventQueue.Enqueue(genEvent);
 
             var queuedEvent = eventQueue.Dequeue(clientID);
             Assert.That(queuedEvent.Source, Is.EqualTo(source));
@@ -74,9 +79,14 @@ namespace EventGen.Tests.Unit
             genEvent.Message = Guid.NewGuid().ToString();
             genEvent.Source = Guid.NewGuid().ToString();
 
-            eventQueue.Enqueue(Guid.NewGuid(), new GenEvent());
-            eventQueue.Enqueue(clientID, genEvent);
-            eventQueue.Enqueue(Guid.NewGuid(), new GenEvent());
+            mockClientIDManager.Setup(m => m.GetClientID()).Returns(Guid.NewGuid());
+            eventQueue.Enqueue(new GenEvent());
+
+            mockClientIDManager.Setup(m => m.GetClientID()).Returns(clientID);
+            eventQueue.Enqueue(genEvent);
+
+            mockClientIDManager.Setup(m => m.GetClientID()).Returns(Guid.NewGuid());
+            eventQueue.Enqueue(new GenEvent());
 
             var queuedEvent = eventQueue.Dequeue(clientID);
             Assert.That(queuedEvent, Is.EqualTo(genEvent));
@@ -94,9 +104,14 @@ namespace EventGen.Tests.Unit
         {
             for (var i = 0; i < 10; i++)
             {
-                eventQueue.Enqueue(Guid.NewGuid(), new GenEvent());
-                eventQueue.Enqueue(clientID, $"source {i}", $"message {i}");
-                eventQueue.Enqueue(Guid.NewGuid(), new GenEvent());
+                mockClientIDManager.Setup(m => m.GetClientID()).Returns(Guid.NewGuid());
+                eventQueue.Enqueue(new GenEvent());
+
+                mockClientIDManager.Setup(m => m.GetClientID()).Returns(clientID);
+                eventQueue.Enqueue($"source {i}", $"message {i}");
+
+                mockClientIDManager.Setup(m => m.GetClientID()).Returns(Guid.NewGuid());
+                eventQueue.Enqueue(new GenEvent());
             }
 
             var events = eventQueue.DequeueAll(clientID).ToArray();
@@ -121,7 +136,7 @@ namespace EventGen.Tests.Unit
             var message = Guid.NewGuid().ToString();
             var source = Guid.NewGuid().ToString();
 
-            eventQueue.Enqueue(clientID, source, message);
+            eventQueue.Enqueue(source, message);
 
             var containsEvents = eventQueue.ContainsEvents(clientID);
             Assert.That(containsEvents, Is.True);
@@ -140,7 +155,8 @@ namespace EventGen.Tests.Unit
             var message = Guid.NewGuid().ToString();
             var source = Guid.NewGuid().ToString();
 
-            eventQueue.Enqueue(Guid.NewGuid(), source, message);
+            mockClientIDManager.Setup(m => m.GetClientID()).Returns(Guid.NewGuid());
+            eventQueue.Enqueue(source, message);
 
             var containsEvents = eventQueue.ContainsEvents(clientID);
             Assert.That(containsEvents, Is.False);
