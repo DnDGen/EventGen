@@ -7,11 +7,13 @@ namespace EventGen
     {
         void Enqueue(GenEvent genEvent);
         void Enqueue(string source, string message);
-        GenEvent Dequeue();
+        GenEvent DequeueForCurrentThread();
         GenEvent Dequeue(Guid clientID);
-        IEnumerable<GenEvent> DequeueAll();
+        IEnumerable<GenEvent> DequeueAllForCurrentThread();
         IEnumerable<GenEvent> DequeueAll(Guid clientID);
-        bool ContainsEvents();
+        bool CurrentThreadContainsEvents();
         bool ContainsEvents(Guid clientID);
+        void ClearCurrentThread();
+        void Clear(Guid clientID);
     }
 }

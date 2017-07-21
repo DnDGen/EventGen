@@ -2,7 +2,7 @@
 using Ninject;
 using NUnit.Framework;
 
-namespace EventGen.Tests.Integration.IoC
+namespace EventGen.Tests.Integration
 {
     [TestFixture]
     public abstract class IntegrationTests

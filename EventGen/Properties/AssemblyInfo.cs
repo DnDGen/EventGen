@@ -34,6 +34,6 @@ using System.Runtime.InteropServices;
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
-[assembly: InternalsVisibleTo("EventGen.Tests.Integration.IoC")]
+[assembly: InternalsVisibleTo("EventGen.Tests.Integration")]
 [assembly: InternalsVisibleTo("EventGen.Tests.Unit")]
 //[assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
