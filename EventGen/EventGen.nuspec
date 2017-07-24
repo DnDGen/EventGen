@@ -2,14 +2,15 @@
 <package >
   <metadata>
     <id>EventGen</id>
-    <version>1.0.0</version>
+    <version>2.0.1</version>
     <title>EventGen</title>
-    <authors>cidthecoatrack</authors>
-    <owners></owners>
+    <authors>Karl M. Speer</authors>
+    <owners>cidthecoatrack</owners>
     <description>
       This is an event logger that manages events based on client IDs, able to transcend multiple threads.
     </description>
     <releaseNotes>
+    Bug #2, Feature #3
     </releaseNotes>
     <summary>
       This is an event logger that manages events based on client IDs.
@@ -19,13 +20,13 @@
     <iconUrl>http://www.downloadclipart.net/thumb/18531-twenty-sided-dice-vector-thumb.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <licenseUrl>http://opensource.org/licenses/Apache-2.0</licenseUrl>
-    <copyright>Copyright  2016</copyright>
+    <copyright>Copyright 2017</copyright>
     <dependencies>
     </dependencies>
     <references></references>
     <tags> dungeons dragons d20 dnd 3.5 gen event log logger generator thread dndgen </tags>
   </metadata>
   <files>
-    <file src="..\EventGen\bin\Debug\EventGen.dll" target="lib" />
+    <file src="bin/Stress/EventGen.dll" target="lib" />
   </files>
 </package>
