@@ -9,6 +9,8 @@ script:
   - mono ./testrunner/NUnit.ConsoleRunner.*/tools/nunit3-console.exe ./EventGen.Tests.Unit/bin/Stress/EventGen.Tests.Unit.dll
   - set -e
   - mono ./testrunner/NUnit.ConsoleRunner.*/tools/nunit3-console.exe ./EventGen.Tests.Integration/bin/Stress/EventGen.Tests.Integration.dll
+  - set -e
+  - mono ./testrunner/NUnit.ConsoleRunner.*/tools/nunit3-console.exe ./EventGen.Tests.Integration.Stress/bin/Stress/EventGen.Tests.Integration.Stress.dll
 deploy:
   skip_cleanup: true
   provider: script
