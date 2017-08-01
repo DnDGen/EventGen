@@ -7,9 +7,10 @@ namespace EventGen.Tests.Integration.Stress
     [TestFixture]
     public abstract class StressTests : IntegrationTests
     {
-        protected readonly Stressor stressor;
+        protected Stressor stressor;
 
-        public StressTests()
+        [OneTimeSetUp]
+        public void StressSetup()
         {
             var runningAssembly = Assembly.GetExecutingAssembly();
 

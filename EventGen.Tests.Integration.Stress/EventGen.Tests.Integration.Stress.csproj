@@ -31,11 +31,13 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Stress|AnyCPU'">
     <OutputPath>bin\Stress\</OutputPath>
-    <DefineConstants>STRESS</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;STRESS</DefineConstants>
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="DnDGen.Stress, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\DnDGen.Stress.1.0.2\lib\DnDGen.Stress.dll</HintPath>
+      <HintPath>..\packages\DnDGen.Stress.1.1.0\lib\DnDGen.Stress.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="EventGen, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
