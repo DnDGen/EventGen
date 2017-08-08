@@ -12,15 +12,16 @@ namespace EventGen.Tests.Integration.Stress
         [OneTimeSetUp]
         public void StressSetup()
         {
-            var runningAssembly = Assembly.GetExecutingAssembly();
+            var options = new StressorOptions();
+            options.RunningAssembly = Assembly.GetExecutingAssembly();
 
 #if STRESS
-            var isFullStress = true;
+            options.IsFullStress = true;
 #else
-            var isFullStress = false;
+            options.IsFullStress = false;
 #endif
 
-            stressor = new Stressor(isFullStress, runningAssembly);
+            stressor = new Stressor(options);
         }
     }
 }
