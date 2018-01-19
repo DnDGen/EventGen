@@ -63,7 +63,7 @@ namespace EventGen.Tests.Integration
             var secondTask = new Task(SecondThreadAction);
 
             firstTask.Start();
-            Thread.Sleep(1); //HACK: Adding this sleep here, as when they begin right after one another, there are odd overlaps when trying to enqueue the events
+            Thread.Sleep(10); //HACK: Adding this sleep here, as when they begin right after one another, there are odd overlaps when trying to enqueue the events
 
             secondTask.Start();
 
@@ -77,23 +77,23 @@ namespace EventGen.Tests.Integration
             Assert.That(secondTask.IsCanceled, Is.False);
 
             var events = EventQueue.DequeueAll(clientID);
-            var orderedEvents = events.OrderBy(e => e.Source).ThenBy(e => e.Message).ToArray();
+            var orderedEvents = events.OrderBy(e => e.Source).ThenBy(e => e.When).ToArray();
             var summaries = orderedEvents.Select(e => $"{e.Source}: {e.Message}");
             var summary = string.Join("; ", summaries);
             Assert.That(events.Count, Is.EqualTo(6), summary);
 
             Assert.That(orderedEvents[0].Source, Is.EqualTo("first thread"));
-            Assert.That(orderedEvents[0].Message, Is.EqualTo("logged a first-thread message"));
+            Assert.That(orderedEvents[0].Message, Is.EqualTo("logged a message (1)"));
             Assert.That(orderedEvents[1].Source, Is.EqualTo("first thread"));
-            Assert.That(orderedEvents[1].Message, Is.EqualTo("logged a message"));
+            Assert.That(orderedEvents[1].Message, Is.EqualTo("logged an event (2)"));
             Assert.That(orderedEvents[2].Source, Is.EqualTo("first thread"));
-            Assert.That(orderedEvents[2].Message, Is.EqualTo("logged an event"));
+            Assert.That(orderedEvents[2].Message, Is.EqualTo("logged a first-thread message (3)"));
             Assert.That(orderedEvents[3].Source, Is.EqualTo("second thread"));
-            Assert.That(orderedEvents[3].Message, Is.EqualTo("logged a message"));
+            Assert.That(orderedEvents[3].Message, Is.EqualTo("logged an event (1)"));
             Assert.That(orderedEvents[4].Source, Is.EqualTo("second thread"));
-            Assert.That(orderedEvents[4].Message, Is.EqualTo("logged a second-thread message"));
+            Assert.That(orderedEvents[4].Message, Is.EqualTo("logged a message (2)"));
             Assert.That(orderedEvents[5].Source, Is.EqualTo("second thread"));
-            Assert.That(orderedEvents[5].Message, Is.EqualTo("logged an event"));
+            Assert.That(orderedEvents[5].Message, Is.EqualTo("logged a second-thread message (3)"));
         }
 
         [Test]
@@ -105,7 +105,7 @@ namespace EventGen.Tests.Integration
             var secondTask = new Task(SecondThreadAction);
 
             firstTask.Start();
-            Thread.Sleep(10);
+            Thread.Sleep(10); //HACK: Adding this sleep here, as when they begin right after one another, there are odd overlaps when trying to enqueue the events
 
             secondTask.Start();
 
@@ -136,7 +136,7 @@ namespace EventGen.Tests.Integration
             var dequeueTask = new Task(FirstDequeueThreadAction);
 
             enqueueTask.Start();
-            Thread.Sleep(1);
+            Thread.Sleep(10); //HACK: Adding this sleep here, as when they begin right after one another, there are odd overlaps when trying to enqueue the events
 
             dequeueTask.Start();
 
@@ -151,13 +151,13 @@ namespace EventGen.Tests.Integration
 
             Assert.That(events.Count, Is.EqualTo(3));
 
-            var orderedEvents = events.OrderBy(e => e.Source).ThenBy(e => e.Message).ToArray();
+            var orderedEvents = events.OrderBy(e => e.Source).ThenBy(e => e.When).ToArray();
             Assert.That(orderedEvents[0].Source, Is.EqualTo("first thread"));
-            Assert.That(orderedEvents[0].Message, Is.EqualTo("logged a first-thread message"));
+            Assert.That(orderedEvents[0].Message, Is.EqualTo("logged a message (1)"));
             Assert.That(orderedEvents[1].Source, Is.EqualTo("first thread"));
-            Assert.That(orderedEvents[1].Message, Is.EqualTo("logged a message"));
+            Assert.That(orderedEvents[1].Message, Is.EqualTo("logged an event (2)"));
             Assert.That(orderedEvents[2].Source, Is.EqualTo("first thread"));
-            Assert.That(orderedEvents[2].Message, Is.EqualTo("logged an event"));
+            Assert.That(orderedEvents[2].Message, Is.EqualTo("logged a first-thread message (3)"));
         }
 
         [Test]
@@ -171,12 +171,14 @@ namespace EventGen.Tests.Integration
             var secondDequeueTask = new Task(SecondDequeueThreadAction);
 
             firstEnqueueTask.Start();
-            Thread.Sleep(1);
+            Thread.Sleep(10); //HACK: Adding this sleep here, as when they begin right after one another, there are odd overlaps when trying to enqueue the events
 
             secondEnqueueTask.Start();
-            Thread.Sleep(1);
+            Thread.Sleep(10); //HACK: Adding this sleep here, as when they begin right after one another, there are odd overlaps when trying to enqueue the events
 
             firstDequeueTask.Start();
+            Thread.Sleep(10); //HACK: Adding this sleep here, as when they begin right after one another, there are odd overlaps when trying to enqueue the events
+
             secondDequeueTask.Start();
 
             WaitOn(firstEnqueueTask, firstDequeueTask, secondEnqueueTask, secondDequeueTask);
@@ -280,7 +282,7 @@ namespace EventGen.Tests.Integration
             var enqueueTask = new Task(CreateEvents);
             enqueueTask.Start();
 
-            Thread.Sleep(PopulateTimeoutInMilliseconds / 3);
+            Thread.Sleep(PopulateTimeoutInMilliseconds / 4);
 
             var events = EventQueue.DequeueAll(clientID);
 
@@ -351,15 +353,15 @@ namespace EventGen.Tests.Integration
         {
             ClientIDManager.SetClientID(clientID);
 
-            EventQueue.Enqueue("first thread", "logged a message");
+            EventQueue.Enqueue("first thread", "logged a message (1)");
 
             if (shouldSleep)
                 Thread.Sleep(60);
 
-            var genEvent = new GenEvent("first thread", "logged an event");
+            var genEvent = new GenEvent("first thread", "logged an event (2)");
             EventQueue.Enqueue(genEvent);
 
-            EventQueue.Enqueue("first thread", "logged a first-thread message");
+            EventQueue.Enqueue("first thread", "logged a first-thread message (3)");
         }
 
         private void SecondThreadAction()
@@ -371,15 +373,15 @@ namespace EventGen.Tests.Integration
         {
             ClientIDManager.SetClientID(targetClientID);
 
-            var genEvent = new GenEvent("second thread", "logged an event");
+            var genEvent = new GenEvent("second thread", "logged an event (1)");
             EventQueue.Enqueue(genEvent);
 
-            EventQueue.Enqueue("second thread", "logged a message");
+            EventQueue.Enqueue("second thread", "logged a message (2)");
 
             if (shouldSleep)
                 Thread.Sleep(30);
 
-            EventQueue.Enqueue("second thread", "logged a second-thread message");
+            EventQueue.Enqueue("second thread", "logged a second-thread message (3)");
         }
 
         private void SecondThreadActionWithSecondClientID()
