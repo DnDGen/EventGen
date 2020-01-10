@@ -1,13 +1,13 @@
 language: csharp
-solution: EventGen.sln
+solution: DnDGen.EventGen.sln
 mono: none
 dotnet: 3.1
 
 script:
-  - dotnet build EventGen.sln -c Release
-    && dotnet test ./EventGen.Tests.Unit/EventGen.Tests.Unit.csproj -v normal
-    && dotnet test ./EventGen.Tests.Integration/EventGen.Tests.Integration.csproj -v normal
-    && dotnet test ./EventGen.Tests.Integration.Stress/EventGen.Tests.Integration.Stress.csproj -v normal -c Stress
+  - dotnet build DnDGen.EventGen.sln -c Release
+    && dotnet test ./DnDGen.EventGen.Tests.Unit/DnDGen.EventGen.Tests.Unit.csproj -v normal
+    && dotnet test ./DnDGen.EventGen.Tests.Integration/DnDGen.EventGen.Tests.Integration.csproj -v normal
+    && dotnet test ./DnDGen.EventGen.Tests.Integration.Stress/DnDGen.EventGen.Tests.Integration.Stress.csproj -v normal -c Stress
 deploy:
   skip_cleanup: true
   provider: script
