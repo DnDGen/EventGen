@@ -17,7 +17,7 @@ namespace EventGen.Tests.Integration
         [Inject]
         public GenEventQueue EventQueue { get; set; }
 
-        private const int PopulateTimeoutInMilliseconds = 100;
+        private const int PopulateTimeoutInMilliseconds = 250;
 
         private bool shouldSleep;
         private List<GenEvent> events;
@@ -282,9 +282,9 @@ namespace EventGen.Tests.Integration
             var enqueueTask = new Task(CreateEvents);
             enqueueTask.Start();
 
-            Thread.Sleep(PopulateTimeoutInMilliseconds / 4);
+            Thread.Sleep(PopulateTimeoutInMilliseconds / 2);
 
-            var events = EventQueue.DequeueAll(clientID);
+            var earlyEvents = EventQueue.DequeueAll(clientID);
 
             WaitOn(enqueueTask);
 
@@ -292,16 +292,12 @@ namespace EventGen.Tests.Integration
             Assert.That(enqueueTask.IsFaulted, Is.False, enqueueTask.Exception?.ToString());
             Assert.That(enqueueTask.IsCanceled, Is.False, "Should not be canceled");
 
-            Assert.That(events, Is.Not.Empty, "Early events should not be empty");
-            Assert.That(events, Is.All.Not.Null);
-            Assert.That(events.Count, Is.AtLeast(100), "Early events should have at least this many");
+            Assert.That(earlyEvents, Is.Not.Empty.And.All.Not.Null);
 
             var laterEvents = EventQueue.DequeueAll(clientID);
-            Assert.That(laterEvents, Is.Not.Empty, "Later events should not be empty");
-            Assert.That(laterEvents, Is.All.Not.Null);
-            Assert.That(laterEvents.Count, Is.AtLeast(100), "Later events should have at least this many");
+            Assert.That(laterEvents, Is.Not.Empty.And.All.Not.Null);
 
-            var duplicates = laterEvents.Intersect(events);
+            var duplicates = laterEvents.Intersect(earlyEvents);
             Assert.That(duplicates, Is.Empty, "Duplicates should be empty");
         }
 
@@ -329,9 +325,9 @@ namespace EventGen.Tests.Integration
             var enqueueTask = new Task(CreateEvents);
             enqueueTask.Start();
 
-            Thread.Sleep(PopulateTimeoutInMilliseconds / 3);
+            Thread.Sleep(PopulateTimeoutInMilliseconds / 2);
 
-            var events = EventQueue.DequeueAll(clientID);
+            var earlyEvents = EventQueue.DequeueAll(clientID);
 
             WaitOn(enqueueTask);
 
@@ -339,14 +335,12 @@ namespace EventGen.Tests.Integration
             Assert.That(enqueueTask.IsFaulted, Is.False, enqueueTask.Exception?.ToString());
             Assert.That(enqueueTask.IsCanceled, Is.False, "Should not be canceled");
 
-            Assert.That(events, Is.Not.Empty, "Early events should not be empty");
-            Assert.That(events, Is.All.Not.Null);
-            Assert.That(events.Count, Is.AtLeast(100), "Early events should have at least this many");
+            Assert.That(earlyEvents, Is.Not.Empty.And.All.Not.Null);
 
             EventQueue.Clear(clientID);
 
             var laterEvents = EventQueue.DequeueAll(clientID);
-            Assert.That(laterEvents, Is.Empty, "Later events should be empty");
+            Assert.That(laterEvents, Is.Empty);
         }
 
         private void FirstThreadAction()
@@ -391,10 +385,10 @@ namespace EventGen.Tests.Integration
 
         private void FirstDequeueThreadAction()
         {
-            PopulateEvents(events, clientID);
+            DequeueEvents(events, clientID);
         }
 
-        private void PopulateEvents(List<GenEvent> targetEvents, Guid clientID)
+        private void DequeueEvents(List<GenEvent> targetEvents, Guid clientID)
         {
             var stopwatch = new Stopwatch();
             stopwatch.Start();
@@ -413,7 +407,7 @@ namespace EventGen.Tests.Integration
 
         private void SecondDequeueThreadAction()
         {
-            PopulateEvents(secondEvents, secondClientID);
+            DequeueEvents(secondEvents, secondClientID);
         }
 
         private void CreateEvents()

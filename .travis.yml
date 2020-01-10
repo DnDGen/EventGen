@@ -1,16 +1,13 @@
 language: csharp
 solution: EventGen.sln
-install:
-  - nuget restore EventGen.sln
-  - nuget install NUnit.Runners -OutputDirectory testrunner
+mono: none
+dotnet: 3.1
+
 script:
-  - xbuild EventGen.sln /p:TargetFrameworkVersion="v4.5" /p:Configuration=Stress
-  - set -e
-  - mono ./testrunner/NUnit.ConsoleRunner.*/tools/nunit3-console.exe ./EventGen.Tests.Unit/bin/Stress/EventGen.Tests.Unit.dll
-  - set -e
-  - mono ./testrunner/NUnit.ConsoleRunner.*/tools/nunit3-console.exe ./EventGen.Tests.Integration/bin/Stress/EventGen.Tests.Integration.dll
-  - set -e
-  - mono ./testrunner/NUnit.ConsoleRunner.*/tools/nunit3-console.exe ./EventGen.Tests.Integration.Stress/bin/Stress/EventGen.Tests.Integration.Stress.dll
+  - dotnet build EventGen.sln -c Release
+    && dotnet test ./EventGen.Tests.Unit/EventGen.Tests.Unit.csproj -v normal
+    && dotnet test ./EventGen.Tests.Integration/EventGen.Tests.Integration.csproj -v normal
+    && dotnet test ./EventGen.Tests.Integration.Stress/EventGen.Tests.Integration.Stress.csproj -v normal -c Stress
 deploy:
   skip_cleanup: true
   provider: script
