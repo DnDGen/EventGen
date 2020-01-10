@@ -1,0 +1,39 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netcoreapp3.1;net45</TargetFrameworks>
+    <PackageId>DnDGen.EventGen</PackageId>
+    <Version>3.0.0</Version>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Authors>Karl M. Speer</Authors>
+    <Company>DnDGen</Company>
+    <Product>EventGen</Product>
+    <Description>This is an event logger that manages events based on client IDs.</Description>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/DnDGen/EventGen</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/DnDGen/EventGen</RepositoryUrl>
+    <PackageTags>dungeons dragons d20 dnd 3.5 gen event log logger generator thread dndgen</PackageTags>
+    <PackageIcon>18531-twenty-sided-dice-vector-thumb.png</PackageIcon>
+    <PackageIconUrl />
+    <PackageReleaseNotes>Feature #4</PackageReleaseNotes>
+    <AssemblyName>DnDGen.EventGen</AssemblyName>
+    <RootNamespace>DnDGen.EventGen</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Ninject" Version="3.3.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\EventGen\18531-twenty-sided-dice-vector-thumb.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+
+  <!--Needed for Framework compatibility when building in Travis-->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" PrivateAssets="All" Version="1.0.0" />
+  </ItemGroup>
+
+</Project>
