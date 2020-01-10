@@ -1,8 +1,8 @@
-﻿using EventGen.IoC;
+﻿using DnDGen.EventGen.IoC;
 using Ninject;
 using NUnit.Framework;
 
-namespace EventGen.Tests.Integration
+namespace DnDGen.EventGen.Tests.Integration
 {
     [TestFixture]
     public abstract class IntegrationTests

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace EventGen
+namespace DnDGen.EventGen
 {
     public interface GenEventQueue
     {

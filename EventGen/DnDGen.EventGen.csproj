@@ -16,6 +16,8 @@
     <PackageIcon>18531-twenty-sided-dice-vector-thumb.png</PackageIcon>
     <PackageIconUrl />
     <PackageReleaseNotes>Feature #4</PackageReleaseNotes>
+    <AssemblyName>DnDGen.EventGen</AssemblyName>
+    <RootNamespace>DnDGen.EventGen</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

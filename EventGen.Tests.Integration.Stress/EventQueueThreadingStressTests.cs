@@ -1,7 +1,7 @@
 ﻿using Ninject;
 using NUnit.Framework;
 
-namespace EventGen.Tests.Integration.Stress
+namespace DnDGen.EventGen.Tests.Integration.Stress
 {
     [TestFixture]
     public class EventQueueThreadingStressTests : StressTests

@@ -1,7 +1,7 @@
-﻿using EventGen.IoC.Modules;
+﻿using DnDGen.EventGen.IoC.Modules;
 using Ninject;
 
-namespace EventGen.IoC
+namespace DnDGen.EventGen.IoC
 {
     public class EventGenModuleLoader
     {

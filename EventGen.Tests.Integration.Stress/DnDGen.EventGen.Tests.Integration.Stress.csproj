@@ -17,8 +17,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\EventGen.Tests.Integration\EventGen.Tests.Integration.csproj" />
-    <ProjectReference Include="..\EventGen\EventGen.csproj" />
+    <ProjectReference Include="..\EventGen.Tests.Integration\DnDGen.EventGen.Tests.Integration.csproj" />
+    <ProjectReference Include="..\EventGen\DnDGen.EventGen.csproj" />
   </ItemGroup>
 
 </Project>

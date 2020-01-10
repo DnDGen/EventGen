@@ -2,7 +2,7 @@
 using NUnit.Framework;
 using System.Reflection;
 
-namespace EventGen.Tests.Integration.Stress
+namespace DnDGen.EventGen.Tests.Integration.Stress
 {
     [TestFixture]
     public abstract class StressTests : IntegrationTests

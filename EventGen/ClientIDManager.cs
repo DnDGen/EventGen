@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo("EventGen.Tests.Integration")]
-[assembly: InternalsVisibleTo("EventGen.Tests.Unit")]
-namespace EventGen
+[assembly: InternalsVisibleTo("DnDGen.EventGen.Tests.Integration")]
+[assembly: InternalsVisibleTo("DnDGen.EventGen.Tests.Unit")]
+namespace DnDGen.EventGen
 {
     public interface ClientIDManager
     {

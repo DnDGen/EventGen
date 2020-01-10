@@ -7,7 +7,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace EventGen.Tests.Integration
+namespace DnDGen.EventGen.Tests.Integration
 {
     [TestFixture]
     public class EventQueueThreadingTests : IntegrationTests

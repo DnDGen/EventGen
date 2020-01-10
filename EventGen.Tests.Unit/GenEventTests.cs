@@ -1,7 +1,7 @@
 ﻿using NUnit.Framework;
 using System;
 
-namespace EventGen.Tests.Unit
+namespace DnDGen.EventGen.Tests.Unit
 {
     [TestFixture]
     public class GenEventTests

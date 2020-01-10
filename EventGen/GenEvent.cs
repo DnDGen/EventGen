@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace EventGen
+namespace DnDGen.EventGen
 {
     public class GenEvent
     {

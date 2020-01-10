@@ -2,7 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 
-namespace EventGen
+namespace DnDGen.EventGen
 {
     internal class DomainGenEventQueue : GenEventQueue
     {

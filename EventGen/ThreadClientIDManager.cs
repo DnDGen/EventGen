@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 
-namespace EventGen
+namespace DnDGen.EventGen
 {
     internal class ThreadClientIDManager : ClientIDManager
     {

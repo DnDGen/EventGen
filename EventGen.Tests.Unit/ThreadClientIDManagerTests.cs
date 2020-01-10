@@ -2,7 +2,7 @@
 using System;
 using System.Threading;
 
-namespace EventGen.Tests.Unit
+namespace DnDGen.EventGen.Tests.Unit
 {
     [TestFixture]
     public class ThreadClientIDManagerTests

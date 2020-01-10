@@ -3,7 +3,7 @@ using NUnit.Framework;
 using System;
 using System.Linq;
 
-namespace EventGen.Tests.Unit
+namespace DnDGen.EventGen.Tests.Unit
 {
     [TestFixture]
     public class DomainGenEventQueueTests

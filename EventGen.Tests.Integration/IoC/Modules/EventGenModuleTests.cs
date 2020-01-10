@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
 
-namespace EventGen.Tests.Integration.IoC.Modules
+namespace DnDGen.EventGen.Tests.Integration.IoC.Modules
 {
     [TestFixture]
     public class EventGenModuleTests : IntegrationTests

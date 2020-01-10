@@ -1,6 +1,6 @@
 ﻿using Ninject.Modules;
 
-namespace EventGen.IoC.Modules
+namespace DnDGen.EventGen.IoC.Modules
 {
     internal class EventGenModule : NinjectModule
     {
