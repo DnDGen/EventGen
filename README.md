@@ -1,5 +1,5 @@
 
-EventGen
+DnDGen.EventGen
 ============
 
 This is a generic event logger that enqueues events and dequeues them on demand.  It allows for dynamic updates that can be accessed while other processes run - namely, the DnDGen.Web project can display detailed updates while other Gen projects are running.
@@ -17,7 +17,7 @@ var genEvent = genEventQueue.Dequeue(clientID);
 
 ### Getting the queue
 
-You can obtain generators from the IoC project.
+You can obtain the event queue from the IoC namespace.
 
 ```C#
 var kernel = new StandardKernel();
@@ -30,6 +30,6 @@ Your particular syntax for how the Ninject injection should work will depend on 
 
 ### Installing EventGen
 
-The project is on [Nuget](https://www.nuget.org/packages/EventGen). Install via the NuGet Package Manager.
+The project is on [Nuget](https://www.nuget.org/packages/DnDGen.EventGen). Install via the NuGet Package Manager.
 
-    PM > Install-Package EventGen
+    PM > Install-Package DnDGen.EventGen
